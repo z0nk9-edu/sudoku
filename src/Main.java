@@ -1,7 +1,6 @@
 
 import java.util.Scanner;
 
-
 public class Main {
     static int[][] board = new int[9][9];
     static boolean[][] rowUsed = new boolean[9][10];
@@ -11,21 +10,41 @@ public class Main {
     static Scanner input = new Scanner(System.in);
 
     public static void main(String[] args) {
-        // long startTime = System.currentTimeMillis();
-        // long duration = 1000;
-        
-        // while (System.currentTimeMillis() - startTime < duration) {
-            generate(0, 0);
-            removeCells();
-            printBoard();
-            // resetState();
-        // }
-        
-        // System.out.println("Total boards generated in 1 second: " + numOfBoards);
-        System.out.println("This is my sudoku game. There is no undo so please try to avoid guessing. \nThere is guarunteed to be exactly one unique solution to every board.");
+        System.out.println("Would you like to benchmark the generator? (y/n)");
+        String benchmarkString = input.nextLine();
+        if (benchmarkString.equalsIgnoreCase("y")) {
+            System.out.println("How long would you like to run for in milliseconds?");
+            long duration = input.nextLong();
+            System.out.println("Do you want to print the boards? (y/n)");
+            input.nextLine();
+            String printString = input.nextLine();
+            boolean willPrint = printString.equalsIgnoreCase("y");
+            long startTime = System.currentTimeMillis();
+
+            while (System.currentTimeMillis() - startTime < duration) {
+                generate(0, 0);
+                removeCells();
+                if (willPrint)
+                    printBoard();
+                resetState();
+            }
+
+            System.out.println("Total boards generated: " + numOfBoards);
+            System.out.println("Average time to generate a board: " + (double) duration / numOfBoards);
+        }
+        System.out.println("Press enter to continue.");
+        input.nextLine();
+        System.out.println(
+                "This is my sudoku game. There is no undo so please try to avoid guessing. \nThere is guarunteed to be exactly one unique solution to every board.");
+        resetState();
+        generate(0, 0);
+        removeCells();
+        printBoard();
         while (nextEmptyCell() != null) {
-            System.out.println("Enter the row you want to edit");
+            System.out.println("Enter the row you want to edit or 0 to stop");
             int row = input.nextInt();
+            if (row == 0)
+                break;
             System.out.println("Enter the column you want to edit");
             int col = input.nextInt();
             if (board[row - 1][col - 1] != 0) {
@@ -46,13 +65,13 @@ public class Main {
             }
         }
     }
-    
+
     public static void resetState() {
         board = new int[9][9];
         rowUsed = new boolean[9][10];
         colUsed = new boolean[9][10];
         boxUsed = new boolean[9][10];
-    }    
+    }
 
     public static boolean generate(int row, int col) {
         final int[] nums = randomNumbers();
@@ -88,7 +107,7 @@ public class Main {
 
     public static int countSolutions() {
         int[] cell = nextEmptyCell();
-        int[] nums = {1, 2, 3, 4, 5, 6, 7, 8, 9};
+        int[] nums = { 1, 2, 3, 4, 5, 6, 7, 8, 9 };
         int count = 0;
         for (int num : nums) {
             if (cell == null) {
@@ -98,7 +117,8 @@ public class Main {
                 addCell(cell[0], cell[1], num);
                 count += countSolutions();
                 removeCell(cell[0], cell[1]);
-                if (count > 1) return count;
+                if (count > 1)
+                    return count;
             }
         }
         return count;
@@ -108,7 +128,7 @@ public class Main {
         for (int i = 0; i < 9; i++) {
             for (int j = 0; j < 9; j++) {
                 if (board[i][j] == 0) {
-                    return new int[]{i, j};
+                    return new int[] { i, j };
                 }
             }
         }
@@ -146,19 +166,19 @@ public class Main {
             if (i % 3 == 0 && i != 0) {
                 System.out.println("---------------------");
             }
-            
+
             for (int j = 0; j < 9; j++) {
                 if (j % 3 == 0 && j != 0) {
                     System.out.print("| ");
                 }
-                
+
                 if (board[i][j] == 0) {
                     System.out.print("  ");
                 } else {
                     System.out.print(board[i][j] + " ");
                 }
             }
-            System.out.println(); 
+            System.out.println();
         }
         System.out.println();
     }
