@@ -7,15 +7,19 @@ public class Main {
     static int numOfBoards = 0;
 
     public static void main(String[] args) {
-        long startTime = System.currentTimeMillis();
-        long duration = 1000;
+        // long startTime = System.currentTimeMillis();
+        // long duration = 1000;
         
-        while (System.currentTimeMillis() - startTime < duration) {
-            generate(0, 0);
-            resetState();
-        }
+        // while (System.currentTimeMillis() - startTime < duration) {
+        //     generate(0, 0);
+        //     resetState();
+        // }
         
-        System.out.println("Total boards generated in 1 second: " + numOfBoards);
+        // System.out.println("Total boards generated in 1 second: " + numOfBoards);
+
+        generate(0, 0);
+        removeCells();
+        printBoard();
     }
     
     public static void resetState() {
@@ -27,56 +31,49 @@ public class Main {
 
     public static boolean generate(int row, int col) {
         final int[] nums = randomNumbers();
-        int boxIndex = (row / 3) * 3 + (col / 3);
         if (row == 9) {
-            printBoard();
             numOfBoards++;
             return true;
         }
         for (int num : nums) {
             if (numValid(row, col, num)) {
-                board[row][col] = num;
-                rowUsed[row][num] = true;
-                colUsed[col][num] = true;
-                boxUsed[boxIndex][num] = true;
-
+                addCell(row, col, num);
                 if (moveToNextCell(row, col)) {
                     return true;
                 }
-
-                rowUsed[row][num] = false;
-                colUsed[col][num] = false;
-                boxUsed[boxIndex][num] = false;
+                removeCell(row, col);
             }
         }
         return false;
     }
 
-    public static void removeCell(int row, int col) {
-        int num = board[row][col];
-        int boxIndex = (row / 3) * 3 + (col / 3);
-        board[row][col] = 0;
-        rowUsed[row][num] = false;
-        colUsed[col][num] = false;
-        boxUsed[boxIndex][num] = false;
+    public static void removeCells() {
+        int row = 0, col = 0, num = 0;
+        while (countSolutions() == 1) {
+            row = (int) (Math.random() * 9);
+            col = (int) (Math.random() * 9);
+            while (board[row][col] == 0) {
+                row = (int) (Math.random() * 9);
+                col = (int) (Math.random() * 9);
+            }
+            num = removeCell(row, col);
+        }
+        addCell(row, col, num);
     }
 
-    public static int countSolutions(int count) {
+    public static int countSolutions() {
         int[] cell = nextEmptyCell();
-        int[] nums = randomNumbers();
-        int boxIndex = (cell[0] / 3) * 3 + (cell[1] / 3);
+        int[] nums = {1, 2, 3, 4, 5, 6, 7, 8, 9};
+        int count = 0;
         for (int num : nums) {
+            if (cell == null) {
+                return 1;
+            }
             if (numValid(cell[0], cell[1], num)) {
-                board[cell[0]][cell[1]] = num;
-                rowUsed[cell[0]][num] = true;
-                colUsed[cell[1]][num] = true;
-                boxUsed[boxIndex][num] = true;
-
-                
-
-                rowUsed[cell[0]][num] = false;
-                colUsed[cell[1]][num] = false;
-                boxUsed[boxIndex][num] = false;
+                addCell(cell[0], cell[1], num);
+                count += countSolutions();
+                removeCell(cell[0], cell[1]);
+                if (count > 1) return count;
             }
         }
         return count;
@@ -91,6 +88,24 @@ public class Main {
             }
         }
         return null;
+    }
+
+    public static int removeCell(int row, int col) {
+        int num = board[row][col];
+        int boxIndex = (row / 3) * 3 + (col / 3);
+        board[row][col] = 0;
+        rowUsed[row][num] = false;
+        colUsed[col][num] = false;
+        boxUsed[boxIndex][num] = false;
+        return num;
+    }
+
+    public static void addCell(int row, int col, int num) {
+        int boxIndex = (row / 3) * 3 + (col / 3);
+        board[row][col] = num;
+        rowUsed[row][num] = true;
+        colUsed[col][num] = true;
+        boxUsed[boxIndex][num] = true;
     }
 
     public static boolean moveToNextCell(int row, int col) {
