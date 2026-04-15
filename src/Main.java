@@ -1,23 +1,50 @@
 
+import java.util.Scanner;
+
+
 public class Main {
     static int[][] board = new int[9][9];
     static boolean[][] rowUsed = new boolean[9][10];
     static boolean[][] colUsed = new boolean[9][10];
     static boolean[][] boxUsed = new boolean[9][10];
     static int numOfBoards = 0;
+    static Scanner input = new Scanner(System.in);
 
     public static void main(String[] args) {
-        long startTime = System.currentTimeMillis();
-        long duration = 1000;
+        // long startTime = System.currentTimeMillis();
+        // long duration = 1000;
         
-        while (System.currentTimeMillis() - startTime < duration) {
+        // while (System.currentTimeMillis() - startTime < duration) {
             generate(0, 0);
             removeCells();
             printBoard();
-            resetState();
-        }
+            // resetState();
+        // }
         
-        System.out.println("Total boards generated in 1 second: " + numOfBoards);
+        // System.out.println("Total boards generated in 1 second: " + numOfBoards);
+        System.out.println("This is my sudoku game. There is no undo so please try to avoid guessing. \nThere is guarunteed to be exactly one unique solution to every board.");
+        while (nextEmptyCell() != null) {
+            System.out.println("Enter the row you want to edit");
+            int row = input.nextInt();
+            System.out.println("Enter the column you want to edit");
+            int col = input.nextInt();
+            if (board[row - 1][col - 1] != 0) {
+                System.out.println("This space has been filled.");
+                continue;
+            }
+            if (!inBounds(row, col)) {
+                System.out.println("Out of bounds.");
+                continue;
+            }
+            System.out.println("Enter the number you want to insert");
+            int num = input.nextInt();
+            if (numValid(row - 1, col - 1, num)) {
+                addCell(row - 1, col - 1, num);
+                printBoard();
+            } else {
+                System.out.println("Invalid number!");
+            }
+        }
     }
     
     public static void resetState() {
@@ -116,10 +143,22 @@ public class Main {
 
     public static void printBoard() {
         for (int i = 0; i < 9; i++) {
-            for (int j = 0; j < 9; j++) {
-                System.out.print(board[i][j] + " ");
+            if (i % 3 == 0 && i != 0) {
+                System.out.println("---------------------");
             }
-            System.out.println();
+            
+            for (int j = 0; j < 9; j++) {
+                if (j % 3 == 0 && j != 0) {
+                    System.out.print("| ");
+                }
+                
+                if (board[i][j] == 0) {
+                    System.out.print("  ");
+                } else {
+                    System.out.print(board[i][j] + " ");
+                }
+            }
+            System.out.println(); 
         }
         System.out.println();
     }
@@ -130,6 +169,10 @@ public class Main {
         return !rowUsed[row][num] &&
                 !colUsed[col][num] &&
                 !boxUsed[boxIndex][num];
+    }
+
+    public static boolean inBounds(int row, int col) {
+        return row > 0 && row < 10 && col > 0 && col < 10;
     }
 
     public static int[] randomNumbers() {
