@@ -7,19 +7,17 @@ public class Main {
     static int numOfBoards = 0;
 
     public static void main(String[] args) {
-        // long startTime = System.currentTimeMillis();
-        // long duration = 1000;
+        long startTime = System.currentTimeMillis();
+        long duration = 1000;
         
-        // while (System.currentTimeMillis() - startTime < duration) {
-        //     generate(0, 0);
-        //     resetState();
-        // }
+        while (System.currentTimeMillis() - startTime < duration) {
+            generate(0, 0);
+            removeCells();
+            printBoard();
+            resetState();
+        }
         
-        // System.out.println("Total boards generated in 1 second: " + numOfBoards);
-
-        generate(0, 0);
-        removeCells();
-        printBoard();
+        System.out.println("Total boards generated in 1 second: " + numOfBoards);
     }
     
     public static void resetState() {
