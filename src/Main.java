@@ -30,7 +30,7 @@ public class Main {
             }
 
             System.out.println("Total boards generated: " + numOfBoards);
-            System.out.println("Average time to generate a board: " + (double) duration / numOfBoards);
+            System.out.println("Average time to generate a board (milliseconds): " + (double) duration / numOfBoards);
         }
         System.out.println("Press enter to continue.");
         input.nextLine();
