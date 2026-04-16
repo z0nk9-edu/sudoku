@@ -15,17 +15,19 @@ public class Main {
         if (benchmarkString.equalsIgnoreCase("y")) {
             System.out.println("How long would you like to run for in milliseconds?");
             long duration = input.nextLong();
-            System.out.println("Do you want to print the boards? (y/n)");
             input.nextLine();
+            System.out.println("Do you want cells to be removed during benchmarking? (y/n)");
+            String removeString = input.nextLine();
+            boolean willRemove = removeString.equalsIgnoreCase("y");
+            System.out.println("Do you want to print the boards? (y/n)");
             String printString = input.nextLine();
             boolean willPrint = printString.equalsIgnoreCase("y");
             long startTime = System.currentTimeMillis();
 
             while (System.currentTimeMillis() - startTime < duration) {
                 generate(0, 0);
-                removeCells();
-                if (willPrint)
-                    printBoard();
+                if (willRemove) removeCells();
+                if (willPrint) printBoard();
                 resetState();
             }
 
