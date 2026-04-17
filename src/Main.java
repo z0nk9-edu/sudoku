@@ -69,6 +69,7 @@ public class Main {
     }
 
     public static void resetState() {
+        numOfBoards++;
         board = new int[9][9];
         rowUsed = new boolean[9][10];
         colUsed = new boolean[9][10];
@@ -78,13 +79,14 @@ public class Main {
     public static boolean generate(int row, int col) {
         final int[] nums = randomNumbers();
         if (row == 9) {
-            numOfBoards++;
             return true;
         }
         for (int num : nums) {
             if (numValid(row, col, num)) {
                 addCell(row, col, num);
-                if (moveToNextCell(row, col)) {
+                int[] cell = nextEmptyCell();
+                if (cell == null) return true;
+                if (generate(cell[0], cell[1])) {
                     return true;
                 }
                 removeCell(row, col);
@@ -155,13 +157,6 @@ public class Main {
         boxUsed[boxIndex][num] = true;
     }
 
-    public static boolean moveToNextCell(int row, int col) {
-        if (col == 8) {
-            return generate(row + 1, 0);
-        } else {
-            return generate(row, col + 1);
-        }
-    }
 
     public static void printBoard() {
         for (int i = 0; i < 9; i++) {
