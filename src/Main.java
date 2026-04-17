@@ -13,26 +13,7 @@ public class Main {
         System.out.println("Would you like to benchmark the generator? (y/n)");
         String benchmarkString = input.nextLine();
         if (benchmarkString.equalsIgnoreCase("y")) {
-            System.out.println("How long would you like to run for in milliseconds?");
-            long duration = input.nextLong();
-            input.nextLine();
-            System.out.println("Do you want cells to be removed during benchmarking? (y/n)");
-            String removeString = input.nextLine();
-            boolean willRemove = removeString.equalsIgnoreCase("y");
-            System.out.println("Do you want to print the boards? (y/n)");
-            String printString = input.nextLine();
-            boolean willPrint = printString.equalsIgnoreCase("y");
-            long startTime = System.currentTimeMillis();
-
-            while (System.currentTimeMillis() - startTime < duration) {
-                generate(0, 0);
-                if (willRemove) removeCells();
-                if (willPrint) printBoard();
-                resetState();
-            }
-
-            System.out.println("Total boards generated: " + numOfBoards);
-            System.out.println("Average time to generate a board (milliseconds): " + (double) duration / numOfBoards);
+            benchmark();
         }
         System.out.println("Press enter to continue.");
         input.nextLine();
@@ -85,7 +66,8 @@ public class Main {
             if (numValid(row, col, num)) {
                 addCell(row, col, num);
                 int[] cell = nextEmptyCell();
-                if (cell == null) return true;
+                if (cell == null)
+                    return true;
                 if (generate(cell[0], cell[1])) {
                     return true;
                 }
@@ -157,7 +139,6 @@ public class Main {
         boxUsed[boxIndex][num] = true;
     }
 
-
     public static void printBoard() {
         for (int i = 0; i < 9; i++) {
             if (i % 3 == 0 && i != 0) {
@@ -206,5 +187,30 @@ public class Main {
         }
 
         return nums;
+    }
+
+    public static void benchmark() {
+        System.out.println("How long would you like to run for in milliseconds?");
+        long duration = input.nextLong();
+        input.nextLine();
+        System.out.println("Do you want cells to be removed during benchmarking? (y/n)");
+        String removeString = input.nextLine();
+        boolean willRemove = removeString.equalsIgnoreCase("y");
+        System.out.println("Do you want to print the boards? (y/n)");
+        String printString = input.nextLine();
+        boolean willPrint = printString.equalsIgnoreCase("y");
+        long startTime = System.currentTimeMillis();
+
+        while (System.currentTimeMillis() - startTime < duration) {
+            generate(0, 0);
+            if (willRemove)
+                removeCells();
+            if (willPrint)
+                printBoard();
+            resetState();
+        }
+
+        System.out.println("Total boards generated: " + numOfBoards);
+        System.out.println("Average time to generate a board (milliseconds): " + (double) duration / numOfBoards);
     }
 }
